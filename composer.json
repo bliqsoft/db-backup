@@ -1,0 +1,12 @@
+{
+    "type": "library",
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "require": {
+        "php": ">=8.2",
+        "spatie/dropbox-api": "^1.22"
+    },
+    "scripts": {
+        "start": "docker-compose -p db-backup -f docker-compose.yml -f docker-compose.local.yml up --force-recreate --build"
+    }
+}

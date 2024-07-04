@@ -1,0 +1,42 @@
+services:
+  mysql-backup:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      # Database credentials
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+
+      # Databases to backup (space separated list). Leave empty to backup all
+      MYSQL_DATABASES: ""
+
+      # Hour of the day to perform the backup (Format: 00:00).
+      # Leave empty to run once and exit.
+      BACKUP_TIME: "00:00"
+
+      # Dropbox access token to upload backups.
+      # Leave empty to disable.
+      DROPBOX_ACCESS_TOKEN: ""
+
+      # Dropbox base path to upload backups.
+      DROPBOX_BASE_PATH: "/Backups"
+
+      # Slack webhook URL for notifications.
+      # Leave empty to disable.
+      SLACK_WEBHOOK_URL: ""
+
+      # Used to identify the server in the Slack notification.
+      SERVER_ID: "server"
+    volumes:
+      - ./backups:/backups
+    networks:
+      - mysql
+    init: true
+
+networks:
+  mysql:
+    external: true
+    name: mysql
