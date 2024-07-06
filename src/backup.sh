@@ -21,18 +21,19 @@ else
   DATABASES=$(mysql --host=${MYSQL_HOST} --port=${MYSQL_PORT} --user=${MYSQL_USER} --password=${MYSQL_PASSWORD} -e "SHOW DATABASES;" | grep -Ev "(Database|information_schema|performance_schema|mysql|sys)")
 fi
 
+echo "Running scheduled backup..."
+
 for DB in $DATABASES; do
-  echo "Dumping database: $DB"
+  echo "- Database: $DB"
   mysqldump --host=${MYSQL_HOST} --port=${MYSQL_PORT} --user=${MYSQL_USER} --password=${MYSQL_PASSWORD} $DB | gzip > ${BACKUP_DIR}/${DB}.sql.gz
-  echo "Done"
+  # echo "Done"
 done
 
-echo "Backup files created in $BACKUP_DIR"
+echo "Backup saved in: $BACKUP_DIR"
 
 if [ -z "$DROPBOX_ACCESS_TOKEN" ]; then
   echo "Environment variable DROPBOX_ACCESS_TOKEN is required"
   exit 1
 fi
 
-echo "Uploading backup files to Dropbox..."
 php send.php $BACKUP_DIR $CURRENT_DATETIME

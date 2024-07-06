@@ -17,9 +17,7 @@ while true; do
   # echo "Hora actual: $CURRENT_TIME"
 
   if [ "$CURRENT_TIME" = "$BACKUP_TIME" ]; then
-    echo "Running scheduled backup..."
     sh backup.sh
-    echo "Backup completed"
   fi
 
   # echo "Waiting..."

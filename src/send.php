@@ -22,7 +22,7 @@ if (empty($dropboxBasePath)) {
     exit(1);
 }
 
-$slackUrl = getenv('SLACK_URL');
+$slackUrl = getenv('SLACK_WEBHOOK_URL');
 
 $client = new Client($authorizationToken);
 // $client = new Spatie\Dropbox\Client([$appKey, $appSecret]);
@@ -41,7 +41,7 @@ if(empty($folderList)) {
     exit(0);
 }
 
-
+echo 'Uploading backup files to Dropbox...' . PHP_EOL;
 
 $results = [];
 $startTime = time();
@@ -53,6 +53,8 @@ foreach ($folderList as $dirPath => $dirFiles) {
         $dropboxFile = $destinationDropboxFolder . '/' . $fileName;
         $file = fopen($fullFile, 'rb');
 
+        echo '- Uploading: ' . $fileName . PHP_EOL;
+
         try {
             $result = (bool) $client->upload($dropboxFile, $file, 'add', true);
         } catch (Throwable $e) {
@@ -60,11 +62,11 @@ foreach ($folderList as $dirPath => $dirFiles) {
         }
 
         $allOk = $allOk && $result;
-        $results[ $fileName ] = $result;
+        $results[$fileName] = $result;
     }
 }
 
-echo 'All OK: ' . ($allOk ? 'YES' : 'NO') . PHP_EOL;
+echo 'Result: ' . ($allOk ? 'OK' : 'ERROR') . PHP_EOL;
 
 if (!empty($slackUrl)) {
     $endTime = time();
